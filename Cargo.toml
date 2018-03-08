@@ -1,0 +1,6 @@
+[package]
+name = "gincana2018"
+version = "0.1.0"
+authors = ["Gregório Granado Magalhães <greg.magalhaes@gmail.com>"]
+
+[dependencies]
