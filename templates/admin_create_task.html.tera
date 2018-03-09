@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device.width, initial-scale=1, shrink-to-fit=no">
+   <title>Placar da Gincana</title>
+   <link rel="stylesheet" href="style.css">
+   <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet">
+</head>
+
+<body>
+   <div class="container">
+      <h1 class="title">タスククリエーター</h1>
+      <div class="divider"></div>
+      <div class="content">
+         <form method="POST" action="admin_create_task">
+            <label>名: <input name="name" type="text" required /></label>
+            <label>値: <input name="value" type="number" required /></label>
+            <button type="submit">作る</button>
+         </form>
+      </div>
+   </div>
+</body>
+</html>

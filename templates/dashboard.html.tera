@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device.width, initial-scale=1, shrink-to-fit=no">
+   <title>Placar da Gincana</title>
+   <!--<link rel="import" href="item.html">-->
+   <link rel="stylesheet" href="static/style.css">
+   <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet">
+</head>
+
+<body>
+   <div class="container">
+      <h1 class="title">伝説の後輩の伝説</h1>
+      <div class="divider"></div>
+      <div class="content">
+         {% for team in teams %}
+            <div class="item" id="{{ team.1 }}">
+               <div class="img {{ team.1 }}">
+                  <img src="static/profile.png" />
+               </div>
+               <div class="info">
+                  <div class="title">
+                     <span class="name">{{ team.0 }}</span>
+                     <span class="level">EXP: <span id="score-{{ team.1 }}" class="points">{{ team.2 }}</span></span>
+                  </div>
+                  <div class="bar">
+                     <canvas class="bar-canvas" color="{{ team.1 }}" width="288" height="36"></canvas>
+                  </div>
+               </div>
+            </div>
+         {% endfor %}
+      </div>
+   </div>
+   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   <script>
+      // NUMBERS
+      const db = 11;
+      const da = 12;
+      const dl = 44, dm = 1, drw = 48, dro = 192;
+      const src = {
+         black:   { x: 0, y:   0, i: -1 },
+         red:     { x: 0, y: 144, i:  0 },
+         green:   { x: 0, y: 288, i:  1 },
+         blue:    { x: 0, y: 432, i:  2 },
+         cyan:    { x: 0, y: 576, i:  3 },
+         magenta: { x: 0, y: 720, i:  4 },
+         yellow:  { x: 0, y: 864, i:  5 },
+      };
+      // IMAGE
+      let img = new Image();
+      let imgLoaded = false;
+      img.src = 'static/bar.png';
+      img.addEventListener('load', function () {
+         imgLoaded = true;
+      });
+      // DATA
+      let factor = {{ factor }};
+      let points = Array.from(document.getElementsByClassName('points')).map(function (elem) {
+         return Number(elem.textContent);
+      });
+      let payload = null;
+
+      function interpolate(a, b, frac) { return a+(b-a)*frac; }
+
+      let prev = null, istart = null;
+      function updateDashboard(curr) {
+         if (!prev) prev = curr;
+         if (imgLoaded) {
+            let percents = null;
+            if (payload) {
+               if (!istart) istart = curr;
+               let delta = 1.0 * (curr - istart) / 1000;
+               if (delta >= 1) {
+                  istart = null;
+                  points = payload.points;
+                  factor = payload.factor;
+                  payload = null;
+                  percents = points.map(function (e) { return [(1.0 * e / factor), e]; });
+               } else percents = points
+                        .map(function (e, i) { return [e, payload.points[i]]; })
+                        .map(function (e) {
+                           return [interpolate((1.0 * e[0] / factor),
+                                              (1.0 * e[1] / payload.factor), delta),
+                                    (e[0] + (1.0 * (e[1] - e[0]) * delta))];
+                        });
+            } else percents = points.map(function (e) { return [(1.0 * e / factor), e]; });
+            Array.from(document.getElementsByClassName('bar-canvas')).forEach(function(cv) {
+               let ctx = cv.getContext('2d');
+               let color = cv.getAttribute('color');
+               let percent = percents[src[color].i][0];
+               let txt = Math.round(percents[src[color].i][1]);
+               document.getElementById('score-' + color).textContent = txt;
+               ctx.save();
+               ctx.clearRect(0, 0, cv.width, cv.height);
+               ctx.globalAlpha = 1;
+               ctx.drawImage(img,
+                              src.black.x,
+                              src.black.y,
+                              dl, 144,
+                              0, 0, db, 36);
+               ctx.drawImage(img,
+                              src.black.x + dl,
+                              src.black.y,
+                              dm, 144,
+                              db, 0, (288 - db - da), 36);
+               ctx.drawImage(img,
+                              src.black.x + dro,
+                              src.black.y,
+                              drw, 144,
+                              (288 - da), 0, da, 36);
+               ctx.drawImage(img,
+                              src[color].x,
+                              src[color].y,
+                              dl, 144,
+                              0, 0, db, 36);
+               ctx.drawImage(img,
+                              src[color].x + dl,
+                              src[color].y,
+                              dm, 144,
+                              db, 0, ((288 - db - da) * percent), 36);
+            });
+         }
+         prev = curr;
+         window.requestAnimationFrame(updateDashboard);
+      }
+
+      function refreshData() {
+         axios.get('dashboard')
+            .then(function (response) {
+               payload = response.data;
+               setTimeout(refreshData, 5000);
+            })
+            .catch(function (error) {
+               console.log(error);
+               setTimeout(refreshData, 5000);
+            });
+      }
+
+      setTimeout(refreshData, 5000);
+      window.requestAnimationFrame(updateDashboard);
+   </script>
+</body>
+</html>

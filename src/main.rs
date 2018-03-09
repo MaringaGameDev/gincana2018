@@ -1,44 +1,64 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+extern crate rand;
 extern crate rocket;
-extern crate rocket_cors;
-
 #[macro_use] extern crate rocket_contrib;
+#[macro_use] extern crate serde_derive;
 
-use rocket::http::Method;
-use rocket_contrib::Json;
-use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors};
+use std::path::{Path, PathBuf};
+use rand::{Rng};
+use rocket::response::NamedFile;
+use rocket_contrib::{Json, Template};
 
+mod admin;
 
-#[get("/")]
-fn dashboard() {}
-
-#[get("/dashboard")]
-fn dash_info() -> Json {
-	Json(json!({
-		"data": [1000, 1000, 1000, 1000, 1000, 1000],
-		"factor": 20000
-	}))
-	
+#[derive(Serialize)]
+struct DashboardContext {
+   teams: [(String, String, u32);6],
+   factor: u32,
 }
 
-#[get("/admin")]
-fn admin_login() {}
+#[get("/")]
+fn home() -> Template {
+   let context = DashboardContext {
+      teams: [("ÉRRE".to_string(), "red".to_string(), 1000),
+               ("GÊ".to_string(), "green".to_string(), 2000),
+               ("BÊ".to_string(), "blue".to_string(), 3000),
+               ("CÊ".to_string(), "cyan".to_string(), 4000),
+               ("ÊME".to_string(), "magenta".to_string(), 5000),
+               ("UAI".to_string(), "yellow".to_string(), 6000)],
+      factor: 20000,
+   };
+   Template::render("dashboard", &context)
+}
 
-fn cors_options() -> Cors {
-    let (allowed_origins, failed_origins) = AllowedOrigins::some(&["*"]);
+#[get("/dashboard")]
+fn dashboard() -> Json {
+   let factor = 20000;
+	Json(json!({
+		"points": [rand::thread_rng().gen_range(1000, factor),
+                  rand::thread_rng().gen_range(1000, factor),
+                  rand::thread_rng().gen_range(1000, factor),
+                  rand::thread_rng().gen_range(1000, factor),
+                  rand::thread_rng().gen_range(1000, factor),
+                  rand::thread_rng().gen_range(1000, factor)],
+		"factor": factor,
+	}))
+}
 
-    // You can also deserialize this
-    rocket_cors::Cors {
-        allowed_origins: allowed_origins,
-        allowed_methods: vec![Method::Get, Method::Post].into_iter().map(From::from).collect(),
-        allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
-        allow_credentials: true,
-        ..Default::default()
-    }
+#[get("/static/<file..>")]
+fn static_files(file: PathBuf) -> Option<NamedFile> {
+   NamedFile::open(Path::new("static/").join(file)).ok()
 }
 
 fn main() {
-	rocket::ignite().mount("/", routes![dashboard, dash_info]).mount("/", rocket_cors::catch_all_options_routes()).manage(cors_options()).launch();
+	rocket::ignite()
+      .mount("/", routes![static_files,
+                           home,
+                           dashboard,
+                           admin::get_login,
+                           admin::post_login])
+      .attach(Template::fairing())
+      .launch();
 }
