@@ -96,7 +96,7 @@ body {
 .container .content .item .img.green.sad img {object-position: -576px -288px;}
 .container .content .item .img.blue.sad img {object-position: -576px -576px;}
 .container .content .item .img.cyan.sad img {object-position: -864px 0;}
-.container .content .item .img.magenta.sad img {object-position: -864px -144px;}
+.container .content .item .img.magenta.sad img {object-position: -864px -288px;}
 .container .content .item .img.yellow.sad img {object-position: -864px -576px;}
 
 .container .content .item .img.red.happy img {object-position: -1152px 0;}
@@ -142,4 +142,41 @@ body {
    height: 36px;
    width: 288px;
 /*    background-color: black; */
+}
+
+.container .content .category-column {
+   display: flex;
+   flex-direction: column;
+   flex-grow: 1;
+   margin: 1rem;
+}
+
+.container .content .category-column .question-card {
+   display: flex;
+   flex-direction: column;
+   margin: 1rem;
+   padding: 1rem;
+   text-transform: uppercase;
+   text-align: center;
+   box-shadow: 0px 0px 2px 1px gray;
+}
+
+.container .content .category-column .question-card p {
+   display: block;
+   flex-grow: 1;
+}
+
+.container .content .category-column .question-card p.difficulty {
+   font-weight: bold;
+}
+
+.container .content .category-column .question-card p.question {
+   font-weight: bold;
+}
+
+.container .content .category-column .question-card p.answer {
+}
+
+.container .content .category-column .question-card p.hidden {
+   display: none !important;
 }

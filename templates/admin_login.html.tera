@@ -4,7 +4,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device.width, initial-scale=1, shrink-to-fit=no">
    <title>Placar da Gincana</title>
-   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="static/style.css">
    <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet">
 </head>
 
@@ -13,7 +13,7 @@
       <h1 class="title">先輩のログイン</h1>
       <div class="divider"></div>
       <div class="content">
-         <form method="POST" action="admin_login">
+         <form method="POST" action="admin">
             <label>パスワード: <input name="password" type="password" required /></label>
             <button type="submit">先輩になる</button>
          </form>

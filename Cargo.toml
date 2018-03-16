@@ -10,6 +10,7 @@ serde = "1.0.28"
 serde_derive = "1.0.28"
 serde_json = "1.0.10"
 rand = "0.4"
+bcrypt = "0.1"
 
 [dependencies.rocket_contrib]
 version = "0.3.6"
