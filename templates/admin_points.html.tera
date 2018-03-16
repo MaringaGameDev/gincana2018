@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device.width, initial-scale=1, shrink-to-fit=no">
+   <title>Placar da Gincana</title>
+   <link rel="stylesheet" href="static/style.css">
+   <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet">
+</head>
+
+<body>
+   <div class="container">
+      <h1 class="title">ポイントギバー</h1>
+      <div class="divider"></div>
+      <div class="content">
+         <form method="POST" action="points">
+            <label>チーム:
+               <select name="team" required>
+                  <option value="r">ÉRRE</option>
+                  <option value="g">GÊ</option>
+                  <option value="b">BÊ</option>
+                  <option value="c">CÊ</option>
+                  <option value="m">ÊME</option>
+                  <option value="y">UAI</option>
+               </select>
+            </label>
+            <label>ナンバー: <input name="value" type="number" required /></label>
+            <button type="submit">ポスト</button>
+         </form>
+      </div>
+   </div>
+</body>
+</html>

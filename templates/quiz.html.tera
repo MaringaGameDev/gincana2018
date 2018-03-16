@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device.width, initial-scale=1, shrink-to-fit=no">
+   <title>Placar da Gincana</title>
+   <!--<link rel="import" href="item.html">-->
+   <link rel="stylesheet" href="static/style.css">
+   <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet">
+</head>
+
+<body>
+   <div class="container">
+      <h1 class="title">伝説の後輩の伝説</h1>
+      <div class="divider"></div>
+      <div class="content">
+         {% for cat in quiz %}
+            <div class="category-column">
+               {% for question in cat.questions %}
+                  <div class="question-card {{ question.state }}" id="{{ cat.name }}-{{ question.diff }}">
+                     <p class="dificulty">{{ question.diff }}</p>
+                     <p class="question">{{ question.title }}</p>
+                     <p class="answer">{{ question.answer }}</p>
+                  </div>
+               {% endfor %}
+            </div>
+         {% endfor %}
+      </div>
+   </div>
+   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   <script>
+      Array.from(document.getElementsByClassName('question-card')).forEach(function (elem) {
+         elem.addEventListener('click', function () {
+            let classes = elem.classList;
+            if (classes.contains("hidden"))
+               classes.replace("hidden", "revealed");
+            else if (classes.contains("revealed"))
+               classes.replace("revealed", "answered");
+            else if (classes.contains("answered"))
+               classes.replace("answered", "hidden");
+         });
+      });
+   </script>
+</body>
+</html>
